@@ -50,6 +50,7 @@ jobs:
     permissions:
       packages: write
       contents: read
+      id-token: write
     outputs:
       frontend-image: ${{ steps.image-names.outputs.frontend-image }}
 
