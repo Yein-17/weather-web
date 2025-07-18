@@ -54,19 +54,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Define image names (force lowercase)
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Define image names (force lowercase for repo)
         id: image-names
         run: |
-          USERNAME=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
-          echo "USERNAME=$USERNAME" >> $GITHUB_ENV
-          FRONTEND_IMAGE="ghcr.io/$USERNAME/weather-frontend:latest"
-          FRONTEND_SHA_IMAGE="ghcr.io/$USERNAME/weather-frontend:${{ github.sha }}"
+          OWNER="${{ github.actor }}"                     # keep original case for login
+          OWNER_LC=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')  # lowercase for repo name
+          FRONTEND_IMAGE="ghcr.io/$OWNER_LC/weather-frontend:latest"
+          FRONTEND_SHA_IMAGE="ghcr.io/$OWNER_LC/weather-frontend:${{ github.sha }}"
+          echo "OWNER=$OWNER" >> $GITHUB_ENV
           echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> $GITHUB_ENV
           echo "FRONTEND_SHA_IMAGE=$FRONTEND_SHA_IMAGE" >> $GITHUB_ENV
           echo "frontend-image=$FRONTEND_IMAGE" >> $GITHUB_OUTPUT
-
-      - name: Log in to GHCR (use lowercase username)
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $USERNAME --password-stdin
 
       - name: Build frontend image
         run: |
@@ -80,6 +81,7 @@ jobs:
         run: |
           docker push $FRONTEND_IMAGE
           docker push $FRONTEND_SHA_IMAGE
+
 
   # Job 3: Image Vulnerability Scan
   scan-images:
