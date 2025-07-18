@@ -58,8 +58,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Log in to GHCR (using PAT)
+        run: |
+          echo "${{ secrets.CR_PAT }}" | docker login ghcr.io \
+            -u ${{ github.actor }} \  
+            --password-stdin
 
       - name: Define image names (force lowercase for repo)
         id: image-names
