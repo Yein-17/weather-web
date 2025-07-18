@@ -67,7 +67,10 @@ jobs:
 
       - name: Build frontend image
         run: |
-          docker build -f ./frontend/Dockerfile -t $FRONTEND_IMAGE ./frontend
+          docker build \
+            --build-arg REACT_APP_WEATHER_API_KEY=${{ secrets.REACT_APP_WEATHER_API_KEY }} \
+            -f ./frontend/Dockerfile \
+            -t $FRONTEND_IMAGE ./frontend
           docker tag $FRONTEND_IMAGE ghcr.io/${{ github.actor }}/weather-frontend:${{ github.sha }}
 
       - name: Push frontend image
