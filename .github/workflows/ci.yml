@@ -62,7 +62,10 @@ jobs:
         run: |
           USERNAME=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
           FRONTEND_IMAGE="ghcr.io/$USERNAME/weather-frontend:latest"
+          FRONTEND_SHA_IMAGE="ghcr.io/$USERNAME/weather-frontend:${{ github.sha }}"
+          echo "USERNAME=$USERNAME" >> $GITHUB_ENV
           echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> $GITHUB_ENV
+          echo "FRONTEND_SHA_IMAGE=$FRONTEND_SHA_IMAGE" >> $GITHUB_ENV
           echo "frontend-image=$FRONTEND_IMAGE" >> $GITHUB_OUTPUT
 
       - name: Build frontend image
@@ -71,12 +74,12 @@ jobs:
             --build-arg REACT_APP_WEATHER_API_KEY=${{ secrets.REACT_APP_WEATHER_API_KEY }} \
             -f ./frontend/Dockerfile \
             -t $FRONTEND_IMAGE ./frontend
-          docker tag $FRONTEND_IMAGE ghcr.io/${{ github.actor }}/weather-frontend:${{ github.sha }}
+          docker tag $FRONTEND_IMAGE $FRONTEND_SHA_IMAGE
 
       - name: Push frontend image
         run: |
           docker push $FRONTEND_IMAGE
-          docker push ghcr.io/${{ github.actor }}/weather-frontend:${{ github.sha }}
+          docker push $FRONTEND_SHA_IMAGE
 
   # Job 3: Image Vulnerability Scan
   scan-images:
