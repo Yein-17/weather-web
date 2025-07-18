@@ -4,7 +4,11 @@ on:
   workflow_run:
     workflows: ["CI Pipeline with GHCR"]
     types: [completed]
-    branches: [main]
+    branches:
+      - main
+    paths-ignore:
+      - '**/README.md'
+
 
 env:
   AWS_REGION: 'ap-southeast-2'                 
