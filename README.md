@@ -1,4 +1,4 @@
-# Weather Dashboard Frontend
+# Weather Web 
 
 This is the React frontend for the Weather Dashboard project. It provides a user-friendly interface to fetch and display live weather data from the OpenWeatherMap API. The application is fully containerized with Docker, continuously tested and built via GitHub Actions, and deployed to AWS S3.
 
